@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VidForge | أدوات الفيديو على المتصفح</title>
+    <meta
+      name="description"
+      content="اضغط وحوّل وقص الفيديو واستخرج الصوت من المتصفح مباشرة. الملف مابيترفعش لأي سيرفر."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Ctext y='14' font-size='14'%3E⚡%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div class="logo">⚡ Vid<span>Forge</span></div>
+      <button id="langBtn" class="ghost" type="button">EN</button>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1 data-i18n="title">أدوات الفيديو بتاعتك، جوه المتصفح</h1>
+        <p data-i18n="sub">
+          اضغط، حوّل، قص، واستخرج الصوت. الفيديو بتاعك مابيسيبش جهازك.
+        </p>
+      </section>
+
+      <section id="drop" class="drop" tabindex="0">
+        <input id="file" type="file" accept="video/*,audio/*" hidden />
+        <div class="drop-icon">🎬</div>
+        <b data-i18n="drop">اسحب الفيديو هنا أو دوس للاختيار</b>
+        <small data-i18n="dropHint"
+          >MP4, MOV, WebM, MKV, AVI ... (يفضل أقل من 500MB)</small
+        >
+      </section>
+
+      <section id="workspace" class="grid" hidden>
+        <div class="card">
+          <video id="player" controls playsinline></video>
+          <div id="info" class="info"></div>
+        </div>
+
+        <div class="card">
+          <div class="tabs" role="tablist">
+            <button
+              class="tab active"
+              data-tab="convert"
+              data-i18n="tabConvert"
+            >
+              تحويل وضغط
+            </button>
+            <button class="tab" data-tab="trim" data-i18n="tabTrim">قص</button>
+            <button class="tab" data-tab="audio" data-i18n="tabAudio">
+              استخراج صوت
+            </button>
+          </div>
+
+          <div class="pane" data-pane="convert">
+            <label
+              ><span data-i18n="format">الصيغة</span>
+              <select id="cFormat">
+                <option value="mp4">MP4 (H.264)</option>
+                <option value="webm">WebM (VP8)</option>
+                <option value="mkv">MKV</option>
+              </select></label
+            >
+            <label
+              ><span data-i18n="res">الدقة</span>
+              <select id="cRes">
+                <option value="0" data-i18n="orig">الأصلية</option>
+                <option value="1080">1080p</option>
+                <option value="720" selected>720p</option>
+                <option value="480">480p</option>
+                <option value="360">360p</option>
+                <option value="240">240p</option>
+              </select></label
+            >
+            <label
+              ><span
+                ><span data-i18n="quality">الجودة</span>:
+                <b id="qVal">23</b></span
+              >
+              <input id="cCrf" type="range" min="18" max="38" value="23" />
+              <small class="hint" data-i18n="qHint"
+                >رقم أقل = جودة أعلى وحجم أكبر</small
+              ></label
+            >
+            <label
+              ><span data-i18n="fps">الفريمات (FPS)</span>
+              <select id="cFps">
+                <option value="0" data-i18n="orig">الأصلية</option>
+                <option value="60">60</option>
+                <option value="30">30</option>
+                <option value="24">24</option>
+              </select></label
+            >
+            <label
+              ><span data-i18n="speed">سرعة المعالجة</span>
+              <select id="cPreset">
+                <option value="ultrafast" selected data-i18n="fast">
+                  سريعة (حجم أكبر)
+                </option>
+                <option value="veryfast" data-i18n="balanced">متوسطة</option>
+                <option value="medium" data-i18n="slow">
+                  بطيئة (حجم أصغر)
+                </option>
+              </select></label
+            >
+            <label class="check"
+              ><input id="cMute" type="checkbox" />
+              <span data-i18n="mute">بدون صوت</span></label
+            >
+            <button class="go" data-run="convert" data-i18n="run">ابدأ</button>
+          </div>
+
+          <div class="pane" data-pane="trim" hidden>
+            <label
+              ><span data-i18n="start">البداية (ثانية)</span>
+              <input id="tStart" type="number" min="0" step="0.1" value="0"
+            /></label>
+            <label
+              ><span data-i18n="end">النهاية (ثانية)</span>
+              <input id="tEnd" type="number" min="0" step="0.1" value="0"
+            /></label>
+            <div class="row">
+              <button
+                class="ghost"
+                id="setStart"
+                type="button"
+                data-i18n="setStart"
+              >
+                خد البداية من المشغل
+              </button>
+              <button
+                class="ghost"
+                id="setEnd"
+                type="button"
+                data-i18n="setEnd"
+              >
+                خد النهاية من المشغل
+              </button>
+            </div>
+            <label class="check"
+              ><input id="tFast" type="checkbox" checked />
+              <span data-i18n="fastCut"
+                >قص سريع بدون إعادة ترميز (ممكن يكون غير دقيق بثواني)</span
+              ></label
+            >
+            <button class="go" data-run="trim" data-i18n="run">ابدأ</button>
+          </div>
+
+          <div class="pane" data-pane="audio" hidden>
+            <label
+              ><span data-i18n="abr">جودة MP3</span>
+              <select id="aBr">
+                <option value="128">128 kbps</option>
+                <option value="192" selected>192 kbps</option>
+                <option value="320">320 kbps</option>
+              </select></label
+            >
+            <button class="go" data-run="audio" data-i18n="run">ابدأ</button>
+          </div>
+
+          <div id="progressBox" hidden>
+            <div class="bar"><div id="bar"></div></div>
+            <small id="status"></small>
+          </div>
+          <div id="result" hidden>
+            <video id="outVideo" controls playsinline hidden></video>
+            <audio id="outAudio" controls hidden></audio>
+            <a id="dl" class="go dl" download data-i18n="download"
+              >تحميل الملف</a>
+            <small id="outInfo"></small>
+          </div>
+        </div>
+      </section>
+
+      <section class="notes">
+        <h2 data-i18n="why">ليه الموقع ده؟</h2>
+        <p data-i18n="whyText">
+          كل المعالجة بتتم على جهازك باستخدام ffmpeg.wasm. مفيش رفع لأي سيرفر.
+          استخدمه مع الفيديوهات اللي إنت تملكها أو ليك حق تعديلها.
+        </p>
+      </section>
+    </main>
+
+    <footer><small>VidForge • ffmpeg.wasm</small></footer>
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>
